@@ -7,9 +7,9 @@ import (
 )
 
 const (
-	SECTION = iota
-	ENTRY_KEY
-	ENTRY_VALUE
+	t_section = iota
+	t_entry_key
+	t_entry_value
 )
 
 type FluentBitConfParser struct {
@@ -24,7 +24,7 @@ func NewFluentBitConfParser(reader io.Reader) *FluentBitConfParser {
 		Conf: &FluentBitConf{
 			Sections: []Section{},
 		},
-		token: SECTION,
+		token: t_section,
 	}
 }
 
@@ -56,7 +56,7 @@ func (parser *FluentBitConfParser) Parse() *FluentBitConf {
 				Name:    "",
 				Entries: []Entry{},
 			}
-			parser.token = SECTION
+			parser.token = t_section
 		default:
 			if unicode.IsSpace(r) {
 				continue
@@ -64,17 +64,17 @@ func (parser *FluentBitConfParser) Parse() *FluentBitConf {
 
 			strValue, _ := parser.parseString()
 			switch parser.token {
-			case SECTION:
+			case t_section:
 				currSection.Name = strValue
-				parser.token = ENTRY_KEY
-			case ENTRY_KEY:
+				parser.token = t_entry_key
+			case t_entry_key:
 				currKey = strValue
-				parser.token = ENTRY_VALUE
-			case ENTRY_VALUE:
-				currSection.BindEntry(currKey, strValue)
+				parser.token = t_entry_value
+			case t_entry_value:
+				currSection.bindEntry(currKey, strValue)
 
 				currKey = ""
-				parser.token = ENTRY_KEY
+				parser.token = t_entry_key
 			}
 		}
 
@@ -96,15 +96,15 @@ func (parser *FluentBitConfParser) parseString() (string, error) {
 			return "", err
 		}
 
-		if parser.token == ENTRY_KEY && unicode.IsSpace(r) {
+		if parser.token == t_entry_key && unicode.IsSpace(r) {
 			return val, nil
 		}
 
-		if parser.token == ENTRY_VALUE && r == '\n' {
+		if parser.token == t_entry_value && r == '\n' {
 			return val, nil
 		}
 
-		if parser.token == SECTION && r == ']' {
+		if parser.token == t_section && r == ']' {
 			return val, nil
 		}
 

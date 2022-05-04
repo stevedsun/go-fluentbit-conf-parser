@@ -26,7 +26,7 @@ func NewSection(name string) *Section {
 	}
 }
 
-func (section *Section) BindEntry(key string, strValue string) {
+func (section *Section) bindEntry(key string, strValue string) {
 
 	var value interface{}
 	if intValue, err := strconv.Atoi(strValue); err == nil {
