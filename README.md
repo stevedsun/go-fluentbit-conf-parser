@@ -1,6 +1,6 @@
 # go-fluentbit-conf-parser
 
-![github](https://img.shields.io/badge/Go-1.17-blue.svg) ![github](https://img.shields.io/badge/License-MIT-green.svg)
+![github](https://img.shields.io/badge/go-1.17-blue.svg) ![github](https://img.shields.io/badge/fluentbit-v1.9-lightblue.svg) ![github](https://img.shields.io/badge/License-MIT-green.svg)
 
 Go package for parsering [Fluentbit](https://fluentbit.io/) `.conf` configuration file.
 
@@ -39,4 +39,4 @@ func main() {
 
 # Todo
 
-[ ] Support [Commands](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/classic-mode/commands)
+- Support [Commands](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/classic-mode/commands)
