@@ -1,4 +1,4 @@
-package fluentbit_conf_parser
+package parser
 
 import (
 	"bufio"
@@ -13,20 +13,22 @@ const (
 )
 
 type FluentBitConfParser struct {
-	reader        *bufio.Reader
-	Configuration []Section
-	token         int
+	reader *bufio.Reader
+	Conf   *FluentBitConf
+	token  int
 }
 
-func NewFbReader(reader io.Reader) *FluentBitConfParser {
+func NewFluentBitConfParser(reader io.Reader) *FluentBitConfParser {
 	return &FluentBitConfParser{
-		reader:        bufio.NewReader(reader),
-		Configuration: []Section{},
-		token:         SECTION,
+		reader: bufio.NewReader(reader),
+		Conf: &FluentBitConf{
+			Sections: []Section{},
+		},
+		token: SECTION,
 	}
 }
 
-func (parser *FluentBitConfParser) Parse() *FluentBitConfParser {
+func (parser *FluentBitConfParser) Parse() *FluentBitConf {
 	var currSection *Section = nil
 	var currKey string
 
@@ -35,11 +37,11 @@ func (parser *FluentBitConfParser) Parse() *FluentBitConfParser {
 		if err != nil {
 			if err == io.EOF {
 				if currSection != nil {
-					parser.Configuration = append(parser.Configuration, *currSection)
+					parser.Conf.Sections = append(parser.Conf.Sections, *currSection)
 				}
-				return parser
+				return parser.Conf
 			}
-			return parser
+			return parser.Conf
 		}
 		switch r {
 		case '\n':
@@ -47,7 +49,7 @@ func (parser *FluentBitConfParser) Parse() *FluentBitConfParser {
 		case '[':
 			// save last config item
 			if currSection != nil {
-				parser.Configuration = append(parser.Configuration, *currSection)
+				parser.Conf.Sections = append(parser.Conf.Sections, *currSection)
 			}
 			// create new config item
 			currSection = &Section{

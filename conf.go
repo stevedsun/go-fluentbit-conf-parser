@@ -1,9 +1,13 @@
-package fluentbit_conf_parser
+package parser
 
 import (
 	"reflect"
 	"strconv"
 )
+
+type FluentBitConf struct {
+	Sections []Section
+}
 
 type Section struct {
 	Name    string
@@ -20,7 +24,6 @@ func NewSection(name string) *Section {
 		Name:    name,
 		Entries: []Entry{},
 	}
-
 }
 
 func (section *Section) BindEntry(key string, strValue string) {
