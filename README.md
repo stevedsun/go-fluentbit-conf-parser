@@ -1,4 +1,4 @@
-# go-fluentbit-conf-parser
+# Fluent-Bit configuration file parser for Golang
 
 ![github](https://img.shields.io/badge/go-1.17-blue.svg) ![github](https://img.shields.io/badge/fluentbit-v1.9-lightblue.svg) ![github](https://img.shields.io/badge/License-MIT-green.svg)
 
