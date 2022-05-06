@@ -1,4 +1,4 @@
-# Fluent-Bit configuration file parser for Golang
+# Fluent-Bit configuration parser for Golang
 
 ![github](https://img.shields.io/badge/go-1.17-blue.svg) ![github](https://img.shields.io/badge/fluentbit-v1.9-lightblue.svg) ![github](https://img.shields.io/badge/License-MIT-green.svg)
 
@@ -6,19 +6,19 @@ Go package for parsering [Fluentbit](https://fluentbit.io/) `.conf` configuratio
 
 > Read more: [Fluentbit Configuration Document](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/classic-mode/format-schema)
 
-## Features
+## 🍭 Features
 
 - Support Section and Entry objects
 - Support [Commands](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/classic-mode/commands)
 - Export all entries of a section into a map object (`Section.EntryMap()`).
 
-## Install
+## 📦 Install
 
 ```shell
 go get -u github.com/stevedsun/go-fluentbit-conf-parser
 ```
 
-## Usage
+## ⌨ Usage
 
 ```go
 package main
