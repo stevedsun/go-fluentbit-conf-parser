@@ -7,6 +7,8 @@ import (
 
 type FluentBitConf struct {
 	Sections []Section
+	Includes []string
+	Sets     map[string]string
 }
 
 type Section struct {

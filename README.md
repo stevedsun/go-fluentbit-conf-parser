@@ -4,7 +4,13 @@
 
 Go package for parsering [Fluentbit](https://fluentbit.io/) `.conf` configuration file.
 
-> more info: [Fluentbit Configuration Document](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/classic-mode/format-schema)
+> Read more: [Fluentbit Configuration Document](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/classic-mode/format-schema)
+
+## Features
+
+- Support Section and Entry objects
+- Support [Commands](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/classic-mode/commands)
+- Export all entries of a section into a map object (`Section.EntryMap()`).
 
 ## Install
 
@@ -25,18 +31,25 @@ import (
 )
 
 func main() {
-	confFile, _ := os.Open("td-agent-bit.conf")
+	confFile, _ := os.Open("fluentbit.conf")
+	defer confFile.Close()
+
 	conf := parser.NewFluentBitConfParser(confFile).Parse()
+
+	for _, include := range conf.Includes {
+		fmt.Printf("@INCLUDE %v\n", include)
+	}
+
+	for key, value := range conf.Sets {
+		fmt.Printf("@SET %v=%v\n", key, value)
+	}
+
 	for _, section := range conf.Sections {
-		fmt.Printf("Section: %v \n", section.Name)
+		fmt.Printf("[%v]\n", section.Name)
 		for _, entry := range section.Entries {
-			fmt.Printf("Entry: %v %v \n", entry.Key, entry.Value)
+			fmt.Printf("    %v %v\n", entry.Key, entry.Value)
 		}
 	}
 }
 
 ```
-
-# Todo
-
-- Support [Commands](https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/classic-mode/commands)

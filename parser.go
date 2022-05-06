@@ -3,6 +3,7 @@ package parser
 import (
 	"bufio"
 	"io"
+	"strings"
 	"unicode"
 )
 
@@ -10,6 +11,10 @@ const (
 	t_section = iota
 	t_entry_key
 	t_entry_value
+	t_command
+	t_command_include
+	t_command_set_key
+	t_command_set_value
 )
 
 type FluentBitConfParser struct {
@@ -23,6 +28,8 @@ func NewFluentBitConfParser(reader io.Reader) *FluentBitConfParser {
 		reader: bufio.NewReader(reader),
 		Conf: &FluentBitConf{
 			Sections: []Section{},
+			Includes: []string{},
+			Sets:     make(map[string]string),
 		},
 		token: t_section,
 	}
@@ -57,6 +64,15 @@ func (parser *FluentBitConfParser) Parse() *FluentBitConf {
 				Entries: []Entry{},
 			}
 			parser.token = t_section
+		case '@':
+			parser.token = t_command
+			cmd, _ := parser.parseString()
+			if strings.ToUpper(cmd) == "@INCLUDE" {
+				parser.token = t_command_include
+			}
+			if strings.ToUpper(cmd) == "@SET" {
+				parser.token = t_command_set_key
+			}
 		default:
 			if unicode.IsSpace(r) {
 				continue
@@ -72,9 +88,15 @@ func (parser *FluentBitConfParser) Parse() *FluentBitConf {
 				parser.token = t_entry_value
 			case t_entry_value:
 				currSection.bindEntry(currKey, strValue)
-
 				currKey = ""
 				parser.token = t_entry_key
+			case t_command_include:
+				parser.Conf.Includes = append(parser.Conf.Includes, strValue)
+			case t_command_set_key:
+				currKey = strValue
+				parser.token = t_command_set_value
+			case t_command_set_value:
+				parser.Conf.Sets[currKey] = strValue
 			}
 		}
 
@@ -105,6 +127,22 @@ func (parser *FluentBitConfParser) parseString() (string, error) {
 		}
 
 		if parser.token == t_section && r == ']' {
+			return val, nil
+		}
+
+		if parser.token == t_command && unicode.IsSpace(r) {
+			return val, nil
+		}
+
+		if parser.token == t_command_include && r == '\n' {
+			return val, nil
+		}
+
+		if parser.token == t_command_set_key && r == '=' {
+			return val, nil
+		}
+
+		if parser.token == t_command_set_value && r == '\n' {
 			return val, nil
 		}
 
